@@ -1,14 +1,21 @@
 import { StyleSheet, Text, View } from 'react-native';
 import TaskItemsList from "./components/TaskItemsList";
 import TaskForm from "./components/TaskForm";
+import { createStore } from "redux";
+import tasksReducer from "./TasksReducer";
+import {Provider} from "react-redux";
+
+const store = createStore(tasksReducer);
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Tasks list!</Text>
-      <TaskForm />
-      <TaskItemsList />
-    </View>
+    <Provider store={store}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Tasks list!</Text>
+        <TaskForm />
+        <TaskItemsList />
+      </View>
+    </Provider>
   );
 }
 

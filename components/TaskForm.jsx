@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, TouchableHighlight } from "react-native";
 import { api } from "../constants";
+import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { addTask } from "../TasksActions";
 
-const TaskForm = () => {
+const TaskForm = (props) => {
   const [newTask, setNewTask] = useState('');
   const [formError, setFormError] = useState(null);
 
@@ -23,7 +26,7 @@ const TaskForm = () => {
         })
         .then((response) => response.data)
         .then((data) => {
-          // Rerender component
+          props.addTask(data);
         });
     }
   }
@@ -74,4 +77,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TaskForm;
+const mapStateToProps = (state) => {
+  const { tasks } = state
+  return { tasks }
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    addTask,
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

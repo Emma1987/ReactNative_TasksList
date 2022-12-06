@@ -3,19 +3,18 @@ import TaskItem from "./TaskItem";
 import { SafeAreaView, FlatList, Text } from "react-native";
 import { NativeBaseProvider } from "native-base";
 import { api } from "../constants";
+import { connect } from "react-redux";
+import { getTasks } from "../TasksActions";
+import { bindActionCreators } from "redux";
 
-const TaskItemsList = () => {
-  const [tasks, manageTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+const TaskItemsList = (props) => {
   const fetchData = () => {
     api
       .get("/task")
       .then((response) => response.data)
       .then((data) => {
-        manageTasks(data);
+        props.getTasks(data);
       });
-    setLoading(false);
   };
 
   const renderItem = ({ item }) => (
@@ -33,10 +32,9 @@ const TaskItemsList = () => {
   return (
     <NativeBaseProvider>
       <SafeAreaView>
-        {loading && <Text>Loading...</Text>}
-        {tasks && (
+        {props.tasks && (
           <FlatList
-            data={tasks}
+            data={props.tasks}
             renderItem={renderItem}
             keyExtractor={task => task.id}
           />
@@ -46,4 +44,15 @@ const TaskItemsList = () => {
   );
 }
 
-export default TaskItemsList;
+const mapStateToProps = (state) => {
+  const { tasks } = state;
+  return { tasks }
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    getTasks,
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskItemsList);

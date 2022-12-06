@@ -3,6 +3,9 @@ import { Button, Modal, StyleSheet, Text, TouchableHighlight, View, Pressable, T
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { api } from "../constants";
+import { connect } from "react-redux";
+import { bindActionCreators} from "redux";
+import {deleteTask, updateTask } from "../TasksActions";
 
 const TaskItem = (props) => {
   const {
@@ -33,7 +36,7 @@ const TaskItem = (props) => {
         })
         .then((response) => response.data)
         .then((data) => {
-          // Rerender component
+          props.updateTask(data);
           setIsModalVisible(false);
         });
     }
@@ -46,7 +49,7 @@ const TaskItem = (props) => {
       })
       .then((response) => response.data)
       .then((data) => {
-        // Rerender component
+        props.deleteTask(data);
       });
   }
 
@@ -172,4 +175,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TaskItem;
+const mapStateToProps = (state) => {
+  const { tasks } = state
+  return { tasks }
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    deleteTask, updateTask
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskItem);
+//export default TaskItem;
